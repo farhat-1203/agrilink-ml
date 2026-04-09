@@ -7,6 +7,9 @@ agrienv/
 __pycache__/
 *.pyc
 
+
+modules/*.json
+
 # Data (DON’T push full datasets)
 data/
 

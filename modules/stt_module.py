@@ -167,9 +167,12 @@ class SpeechToText:
 # 🔧 FACTORY
 # ─────────────────────────────────────────────
 
-def get_speech_to_text_module():
-    return SpeechToText("elite-name-474914-u3-a3e989e02736.json")
+import os
 
+def get_speech_to_text_module():
+    return SpeechToText(
+        os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    )
 
 # ─────────────────────────────────────────────
 # 🚀 MAIN PIPELINE
