@@ -1,0 +1,14 @@
+
+
+# Virtual env
+agrienv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Data (DON’T push full datasets)
+data/
+
+# System files
+.env
