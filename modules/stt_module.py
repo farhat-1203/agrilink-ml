@@ -1,6 +1,8 @@
 import io
 import re
 import asyncio
+import json
+import os
 # import sounddevice as sd
 from scipy.io.wavfile import write
 from google.cloud import speech
@@ -99,9 +101,14 @@ def extract_crop_details(text):
 # ─────────────────────────────────────────────
 
 class SpeechToText:
-    def __init__(self, credentials_path: str):
-        creds = service_account.Credentials.from_service_account_file(credentials_path)
-        self.client = speech.SpeechClient(credentials=creds)
+    def __init__(self, credentials):
+        """
+        Initialize SpeechToText with Google Cloud credentials.
+        
+        Args:
+            credentials: google.oauth2.service_account.Credentials object
+        """
+        self.client = speech.SpeechClient(credentials=credentials)
 
         # 🔥 Boost important words
         self.phrases = [
@@ -167,12 +174,44 @@ class SpeechToText:
 # 🔧 FACTORY
 # ─────────────────────────────────────────────
 
-import os
-
 def get_speech_to_text_module():
-    return SpeechToText(
-        os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    """
+    Factory function to create SpeechToText instance.
+    Reads credentials from environment variable GOOGLE_CREDENTIALS_JSON.
+    Falls back to file path for local development.
+    
+    Returns:
+        SpeechToText instance
+        
+    Raises:
+        ValueError: If credentials are not found in env or file
+    """
+    # Try to get credentials from environment variable (for production/Render)
+    creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    
+    if creds_json:
+        # Production: Load from environment variable
+        try:
+            creds_dict = json.loads(creds_json)
+            creds = service_account.Credentials.from_service_account_info(creds_dict)
+            print("✅ Loaded Google Cloud credentials from environment variable")
+            return SpeechToText(credentials=creds)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in GOOGLE_CREDENTIALS_JSON: {e}")
+    
+    # Fallback: Try to load from file (for local development)
+    credentials_file = "elite-name-474914-u3-a3e989e02736.json"
+    if os.path.exists(credentials_file):
+        creds = service_account.Credentials.from_service_account_file(credentials_file)
+        print(f"✅ Loaded Google Cloud credentials from file: {credentials_file}")
+        return SpeechToText(credentials=creds)
+    
+    # No credentials found
+    raise ValueError(
+        "Google Cloud credentials not found. "
+        "Set GOOGLE_CREDENTIALS_JSON environment variable or provide credentials file."
     )
+
 
 # ─────────────────────────────────────────────
 # 🚀 MAIN PIPELINE
