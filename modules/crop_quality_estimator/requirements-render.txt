@@ -1,0 +1,17 @@
+# CPU-only PyTorch (smaller, faster install on Render)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.0+cpu
+torchvision==0.16.0+cpu
+
+# Computer vision
+opencv-python-headless==4.8.1.78
+Pillow==10.1.0
+
+# API (required)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+pydantic==2.5.0
+
+# Numerics
+numpy==1.26.2

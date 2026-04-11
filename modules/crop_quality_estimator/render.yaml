@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: crop-quality-api
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: modules/crop_quality_estimator
+    buildCommand: pip install --upgrade pip && pip install -r requirements-render.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: DEVICE
+        value: cpu
+      - key: PORT
+        generateValue: true
